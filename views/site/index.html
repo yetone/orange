@@ -1,0 +1,16 @@
+{% extends "../base.html" %}
+
+{% block title %}{% end %}
+{% block script %}
+<script type="text/javascript" src="{{ static_url('js/socket.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/longpolling.js') }}"></script>
+{% end %}
+{% block mainbar %}
+{% if current_user %}
+  {{ modules.TwitterForm() }}
+{% end %}
+{{ modules.Iterms(posts) }}
+<div id="loadmore">
+  <a class="loadmore" href="/page/{{ page + 1 }}">更多</a>
+</div>
+{% end %}

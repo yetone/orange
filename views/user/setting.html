@@ -1,0 +1,36 @@
+{% extends "../base.html" %}
+
+{% block mainbar %}
+  <form method="post" action="/upload/avatar" enctype="multipart/form-data" method="post">
+    <fieldset>
+      <legend>头像设置</legend>
+      <div class="form-goup">
+        <label for="avatar-upload">头像设置</label>
+        <input type="file" name="myavatar" />
+        {{ xsrf_form_html() }}
+        <button class="btn mini-btn">上传</button>
+      </div>
+    </fieldset>
+  </form>
+  <form method="post" action="/account/setting" id="setting">
+    <fieldset>
+      <legend>个人资料设置</legend>
+      <div class="form-group">
+        <label for="description">简介</label>
+        <textarea id="description" name="description">{% if current_user.description is not None %}{{ current_user.description }}{% end %}</textarea>
+      </div>
+      <div class="form-group">
+        <label for="websie">网址</label>
+        <input id="website" name="website" size="40" type="text" {% if current_user.website is not None %}value="{{ current_user.website }}"{% end %}>
+      </div>
+      <div class="form-group">
+        <label for="city">城市</label>
+        <input id="city" name="city" size="10" type="text" {% if current_user.city is not None %}value="{{ current_user.city }}"{% end %}>
+      </div>
+      <div class="form-action">
+        {{ xsrf_form_html() }}
+        <input class="btn" name="commit" type="submit" value="确定">
+      </div>
+  </fieldset>
+  </form>
+{% end %}

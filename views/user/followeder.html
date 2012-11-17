@@ -1,0 +1,14 @@
+{% extends "../base.html" %}
+
+{% block title %} {{ currenter.name }} - {% end %}
+{% block script %}<script type="text/javascript" src="{{ static_url('js/profile.js') }}"></script>{% end %}
+{% block content %}
+{{ modules.Profile(currenter)}}
+<div id="mainbar">
+  <header>正在关注</header>
+  {{ modules.UserList(users) }}
+  <div id="loadmore">
+    <a class="loadmore" href="/user/{{ currenter.name }}/following/page/{{ page + 1 }}">更多</a>
+  </div>
+</div>
+{% end %}

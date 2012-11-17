@@ -1,0 +1,14 @@
+var wsUpdater = {
+  socket: null,
+  start: function(){
+    if ("WebSocket" in window) {
+      wsUpdater.socket = new WebSocket("ws://localhost:8888/websocket");
+    } else {
+      wsUpdater.socket = new MozWebSocket("ws://localhost:8888/websocket");
+    }
+    wsUpdater.socket.onmessage = function(event) {
+      $('.items').prepend('<li class="moreunread"><a href="#;">' + event.data + '条新推文</a></li>');
+    };
+  }
+};
+wsUpdater.start();

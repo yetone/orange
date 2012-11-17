@@ -1,0 +1,44 @@
+{% extends "../base.html" %}
+
+{% block title %}{{ current_user.name }} - {% end %}
+{% block mainbar %}
+<ul class="items notifier-items">
+{% if notifiers != [] %}
+  {% for n in notifiers %}
+    {% if n.status == 0 %}
+  <li class="item notifier-item unread">
+    {% else %}
+  <li class="item notifier-item">
+    {% end %}
+    <a href="/user/{{ n.get_who().name }}">
+      <img class="avatar" src="{{ n.get_who().get_avatar() }}">
+    </a>
+    <div class="twitter-content">
+      <div class="name">
+        <a href="/user/{{ n.get_who().name }}">
+          <strong>{{ n.get_who().name }}</strong>
+        </a>
+        {% if n.type != 3 %}
+        <span>在</span>
+        <a href="/post/{{ n.get_post().id }}">
+          <span class="post-title">『{{ n.get_post().format_content() }}』</span>
+        </a>
+          {% if n.type == 1 %}
+          中回复你：
+          {% elif n.type == 2 %}
+          中提及了你:
+          {% end %}
+        {% else %}
+        在『<a href="/post/{{ n.get_post().id }}">推文</a>』中提及了你：
+        {% end %}
+      </div>
+      <div class="content">{{ n.get_content() }}</div>
+      <div class="info">
+        <small>{{ n.format_date() }}</small>
+      </div>
+    </div>
+  </li>
+  {% end %}
+{% end %}
+</ul>
+{% end %}

@@ -1,0 +1,33 @@
+<div class="big-profile">
+  <div class="profile-card">
+    <a href="#;">
+      <img class="avatar" src="{{ user.get_avatar(size=128) }}">
+    </a>
+    <div class="mation">
+      <strong>{{ user.name }}</strong>
+      <small>第 {{ user.id }} 号会员，创建于 {{ user.format_date() }}</small>
+      {% if user.description %}
+      <div class="description">{{ user.description }}</div>
+      {% end %}
+      {% if user.website %}
+      <div class="website"><a href="{{ user.website }}">{{ user.website }}</a></div>
+      {% end %}
+    </div>
+  </div>
+  <div class="profile-action">
+    {% if current_user %}
+      {% if current_user.id == user.id %}
+        <a class="btn" href="/account/setting">编辑你的个人资料</a>
+      {% elif user in current_user.get_followeders() %}
+        <a class="btn" href="/user/{{ user.name }}/unfollow">已关注</a>
+      {% else %}
+        <a class="btn unfo" href="/user/{{ user.name }}/follow">关注</a>
+      {% end %}
+    {% end %}
+    <ul class="stats">
+      <li><a href="/user/{{ user.name }}"><strong>{{ user.get_posts_amount() }}</strong>推文</a></li>
+      <li><a href="/user/{{ user.name }}/following"><strong>{{ user.get_followeders_amount() }}</strong>正在关注</a></li>
+      <li><a href="/user/{{ user.name }}/followers"><strong>{{ user.get_followers_amount() }}</strong>关注者</a></li>
+    </ul>
+  </div>
+</div>

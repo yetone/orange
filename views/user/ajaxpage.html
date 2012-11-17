@@ -1,0 +1,26 @@
+{% for user in users %}
+  <div class="item user-item">
+    <a href="/user/{{ user.name }}">
+      <img class="avatar" src="{{ user.get_avatar() }}">
+    </a>
+    <div class="mini-profile-content">
+      <div class="name">
+        <a href="/user/{{ user.name }}">
+          <strong>{{ user.name }}</strong>
+        </a>
+      </div>
+      <div class="content">{% if user.description %}{{ user.description }}{% end %}</div>
+    </div>
+    <div class="profile-action">
+      {% if current_user %}
+        {% if current_user.id == user.id %}
+          <a class="btn" href="/account/setting">编辑你的个人资料</a>
+        {% elif user in current_user.get_followeders() %}
+          <a class="btn" href="/user/{{ user.name }}/unfollow">已关注</a>
+        {% else %}
+          <a class="btn unfo" href="/user/{{ user.name }}/follow">关注</a>
+        {% end %}
+      {% end %}
+    </div>
+  </div>
+{% end %}

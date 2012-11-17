@@ -1,0 +1,10 @@
+{% extends "../base.html" %}
+
+{% block script %}<script type="text/javascript" src="{{ static_url('js/profile.js') }}"></script>{% end %}
+{% block mainbar %}
+<div class="referrers">
+  <header>先关注几位同学吧</header>
+  {{ modules.UserList(users) }}
+  <a class="btn" href="/account/setting">下一步</a>
+</div>
+{% end %}

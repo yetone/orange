@@ -1,0 +1,67 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{% block title %}{% end %}{{ escape(handler.settings['title']) }}</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ static_url('css/style.css') }}" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ static_url('css/jquery.atwho.css') }}" />
+    {% block style %}{% end %}
+  </head>
+  <body>
+    <div id="nav">
+      <div class="wrapper">
+        <div class="band">
+          <a href="/"><h1>{{ handler.settings['title'] }}</h1></a>
+        </div>
+        <div class="menu">
+        {% if not current_user %}
+          <a href="/register">注册</a>
+          <a href="/login">登录</a>
+        {% else %}
+          <a href="/logout">注销</a>
+        {% end %}
+        </div>
+      </div>
+    </div>
+    <div class="wrapper">
+      <div id="content">
+        {% block content %}
+        <div id="mainbar">
+          {% block mainbar %}{% end %}
+        </div>
+        <div id="sidebar">
+          {% if current_user %}
+          <div class="box mini-profile">
+            <div class="profile-summary">
+              <a href="/user/{{ current_user.name }}">
+                <img class="avatar" src="{{ current_user.get_avatar() }}">
+                <div class="mation">
+                  <b class="fullname">{{ current_user.name }}</b>
+                  <small>查看我的个人资料</small>
+                </div>
+              </a>
+            </div>
+            <div class="profile-stats">
+              <ul class="stats">
+                <li><a href="/user/{{ current_user.name }}"><strong>{{ current_user.get_posts_amount() }}</strong>推文</a></li>
+                <li><a href="/user/{{ current_user.name }}/following"><strong>{{ current_user.get_followeders_amount() }}</strong>正在关注</a></li>
+                <li><a href="/user/{{ current_user.name }}/followers"><strong>{{ current_user.get_followers_amount() }}</strong>关注者</a></li>
+              </ul>
+            </div>
+          </div>
+          {% end %}
+          {% block sidebar %}{% end %}
+        </div>
+        {% end %}
+      </div>
+    </div>
+    <script type="text/javascript" src="{{ static_url('js/img.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/jquery.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/base.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/notifierpolling.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/jquery.atwho.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/jquery.caret.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/at.js') }}"></script>
+    {% block script %}{% end %}
+  </body>
+</html>
