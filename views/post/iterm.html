@@ -1,7 +1,7 @@
 {% extends "../base.html" %}
 {% block mainbar %}
 <section class="box no-padding">
-<div class="item twitter-item single">
+<div id="post_{{ post.id }}" class="item twitter-item single">
   <a href="/user/{{ post.get_author().name }}">
     <img class="avatar" src="{{ post.get_author().get_avatar() }}">
   </a>

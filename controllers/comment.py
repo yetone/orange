@@ -37,9 +37,10 @@ class CommentAddHandler(BaseHandler):
             db.commit()
             the_comment = db.query(Comment).order_by(sa.desc(Comment.created_at)).filter(Comment.user_id ==
                     user.id).first()
-            self.write(tornado.escape.json_encode({'username': user.name, 'avatar':
-                user.get_avatar(size=24), 'time': formatDate(int(time.time())),
-                'content': content}))
+            if self.is_ajax():
+                self.write(tornado.escape.json_encode({'username': user.name, 'avatar':
+                    user.get_avatar(size=24), 'time': formatDate(int(time.time())),
+                    'content': content}))
             if post.user_id != user.id:
                 db.add(Notifier(post_id=post_id, who_id=user.id,
                     whom_id=post.user_id,

@@ -44,11 +44,11 @@ $(function(){
     }
   );
   $('.del').live('click', function(){
-    var idx = $(this).parents('li.twitter-item').attr('id');
+    var idx = $(this).parents('.twitter-item').attr('id');
     var id = idx.substr(idx.indexOf('_') + 1, idx.length);
     $('.lightbox').remove();
     $('#confirm-box').remove();
-    var item = $(this).parents('li.twitter-item').html();
+    var item = $(this).parents('.twitter-item').html();
     var markup = [
       '<div class="lightbox"></div>',
       '<section id="confirm-box" class="box no-padding">',
@@ -110,17 +110,19 @@ $(function(){
         $(precontent).clone().hide().prependTo('.twitter-items').slideDown();
       }
       $('.twitter-action .btn').val('发布');
+      var post_count_area = $('#sidebar .mini-profile .stats li:first a strong');
+      var post_count = parseInt(post_count_area.html());
+      post_count += 1;
+      post_count_area.html(post_count);
     });
-    var post_count_area = $('#sidebar .mini-profile .stats li:first a strong');
-    var post_count = parseInt(post_count_area.html());
-    post_count += 1;
-    post_count_area.html(post_count);
     $(this).parents('form').children('textarea').val('');
     return false;
   });
   $('.twitter-comment-textbox .btn').live('click',
     function(){
       $(this).val('正在发布...');
+      var idx = $(this).parents('.twitter-item').attr('id');
+      var id = idx.substr(idx.indexOf('_') + 1, idx.length);
       var items = $(this).parents('.twitter-comment-textbox').next();
       var url = $(this).parents('form').attr('action');
       var content = $(this).prev().val();
@@ -130,9 +132,9 @@ $(function(){
         data = eval("(" + data + ")");
         var precontent = "<li class='comment-iterm'><a href='/user/" + data.username + "'><img class='avatar' src='" + data.avatar + "'></a><div class='comment-content'><div class='name'><strong>" + data.username + "</strong></div><div class='content'>" + data.content + "</div><div class='info'><small>" + data.time +" </small></div></li>";
         $(precontent).clone().hide().prependTo(items).slideDown();
+        $('#post_' + id + ' .twitter-comment-textbox .btn').val('发布');
       });
       $(this).prev().val('');
-      $(this).val('发布');
       return false;
   });
   $('.loadmore').click(function(){
