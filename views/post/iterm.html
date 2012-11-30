@@ -1,6 +1,7 @@
 {% extends "../base.html" %}
 {% block mainbar %}
-<div class="item">
+<section class="box no-padding">
+<div class="item twitter-item single">
   <a href="/user/{{ post.get_author().name }}">
     <img class="avatar" src="{{ post.get_author().get_avatar() }}">
   </a>
@@ -12,36 +13,50 @@
     </div>
     <div class="content">{{ post.content }}</div>
     <div class="info">
-      <small>{{ post.format_date() }}</small>
+      <a href="/post/{{ post.id }}"><small>{{ post.format_date() }}</small></a>
       {% if current_user %}
       <div class="action">
         <ul>
           <li>
             <a class="reply" href="#;">reply</a>
           </li>
+          {% if current_user.id == post.user_id %}
           <li>
-            <a class="retweet" href="#;">retweet</a>
+            <a class="del" href="/post/{{ post.id }}/del">del</a>
           </li>
+          {% else %}
           <li>
-            <a class="fav" href="#;">fav</a>
+            {% if current_user.retweeted_it(post) %}
+              <a class="retweet" href="/post/{{ post.id }}/retweet">retweeted</a>
+            {% else %}
+              <a class="retweet" href="/post/{{ post.id }}/retweet">retweet</a>
+            {% end %}
+          </li>
+          {% end %}
+          <li>
+            {% if current_user.faved_it(post) %}
+              <a class="fav faved" href="/post/{{ post.id }}/fav">faved</a>
+            {% else %}
+              <a class="fav" href="/post/{{ post.id }}/fav">fav</a>
+            {% end %}
           </li>
         </ul>
       </div>
       {% end %}
     </div>
   </div>
-  <div class="comment-wrap">
+  <div class="comment-wrap" style="display: block;">
     <div class="twitter-comment-textbox">
       <form method="post" action="/post/{{ post.id }}/comment/add">
-        <input id="comment-editor" type="text" name="comment-content" size="35">
+        <input class="comment-editor" type="text" name="comment-content" size="35">
         <input class="btn mini-btn" type="submit" value="发布">
         {{ xsrf_form_html() }}
       </form>
     </div>
-    <div class="twitter-comments">
+    <ul class="items twitter-comments">
     {% if len(post.get_comments()) > 0 %}
       {% for comment in post.get_comments() %}
-      <div class="comment-iterm">
+      <li class="item comment-iterm">
         <a href="/user/{{ comment.get_author().name }}"><img class="avatar" src="{{ comment.get_author().get_avatar(size=24) }}"></a>
         <div class="comment-content">
           <div class="name">
@@ -54,10 +69,11 @@
             <small>{{ comment.format_date() }}</small>
           </div>
         </div>
-      </div>
+      </li>
       {% end %}
     {% end %}
-    </div>
+    </ul>
   </div>
 </div>
+</section>
 {% end %}

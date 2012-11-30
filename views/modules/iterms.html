@@ -1,6 +1,15 @@
-<ul class="items">
+<ul class="items twitter-items">
   {% for post in posts %}
-  <li class="item">
+  {% set post1 = post %}
+  {% if post.type == 2 %}
+  {% set user = post1.get_author() %}
+  {% set post = post1.get_origin_post() %}
+  {% end %}
+  {% if post1.type == 2 %}
+  <li id="post_{{ post.id }}" class="item twitter-item curly">
+  {% else %}
+  <li id="post_{{ post.id }}" class="item twitter-item">
+  {% end %}
     <a href="/user/{{ post.get_author().name }}">
       <img class="avatar" src="{{ post.get_author().get_avatar() }}">
     </a>
@@ -10,20 +19,42 @@
           <strong>{{ post.get_author().name }}</strong>
         </a>
       </div>
+      {% if post1.type == 2 %}
+      <i class="dogear"></i>
+      {% end %}
       <div class="content">{{ post.content }}</div>
       <div class="info">
-        <small>{{ post.format_date() }}</small>
+        {% if current_user and post1.type == 2 %}
+        <a href="/post/{{ post.id }}"><small>{{ post1.format_date() }}</small></a>
+        <span class="retweeter">由 <a href="/user/{{ user.name }}">{{ user.name }}</a> 转发</span>
+        {% else %}
+        <a href="/post/{{ post.id }}"><small>{{ post.format_date() }}</small></a>
+        {% end %}
         {% if current_user %}
         <div class="action">
           <ul>
             <li>
               <a class="reply" href="#;">reply</a>
             </li>
+            {% if current_user.id == post.user_id %}
             <li>
-              <a class="retweet" href="#;">retweet</a>
+              <a class="del" href="/post/{{ post.id }}/del">del</a>
             </li>
+            {% else %}
             <li>
-              <a class="fav" href="#;">fav</a>
+              {% if current_user.retweeted_it(post) %}
+                <a class="retweet" href="/post/{{ post.id }}/retweet">retweeted</a>
+              {% else %}
+                <a class="retweet" href="/post/{{ post.id }}/retweet">retweet</a>
+              {% end %}
+            </li>
+            {% end %}
+            <li>
+              {% if current_user.faved_it(post) %}
+                <a class="fav faved" href="/post/{{ post.id }}/fav">faved</a>
+              {% else %}
+                <a class="fav" href="/post/{{ post.id }}/fav">fav</a>
+              {% end %}
             </li>
           </ul>
         </div>
@@ -33,15 +64,15 @@
     <div class="comment-wrap">
       <div class="twitter-comment-textbox">
         <form method="post" action="/post/{{ post.id }}/comment/add">
-          <input id="comment-editor" type="text" name="comment-content" size="35" onkeydown="if(event.ctrlKey&&event.keyCode==13){document.getElementById('comment-submit').click();return false};">
-          <input id="comment-submit" class="btn mini-btn" type="submit" value="发布">
+          <input class="comment-editor" type="text" name="comment-content" size="35">
+          <input class="btn mini-btn comment-submit" type="submit" value="发布">
           {{ xsrf_form_html() }}
         </form>
       </div>
-      <div class="twitter-comments">
+      <ul class="items twitter-comments">
       {% if len(post.get_comments()) > 0 %}
         {% for comment in post.get_comments() %}
-        <div class="comment-iterm">
+        <li class="item comment-iterm">
           <a href="/user/{{ comment.get_author().name }}"><img class="avatar" src="{{ comment.get_author().get_avatar(size=24) }}"></a>
           <div class="comment-content">
             <div class="name">
@@ -54,13 +85,11 @@
               <small>{{ comment.format_date() }}</small>
             </div>
           </div>
-        </div>
+        </li>
         {% end %}
       {% end %}
-      </div>
+      </ul>
     </div>
   </li>
   {% end %}
-  <div id="loading">正在加载...</div>
-  <div id="nomoreresults">加载完毕</div>
 </ul>

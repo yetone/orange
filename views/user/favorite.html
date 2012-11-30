@@ -1,0 +1,17 @@
+{% extends "../base.html" %}
+
+{% block title %}收藏 - {% end %}
+{% block script %}
+<script type="text/javascript" src="{{ static_url('js/socket.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/longpolling.js') }}"></script>
+{% end %}
+{% block mainbar %}
+{% if posts != [] %}
+<section class="box no-padding">
+{{ modules.Iterms(posts) }}
+<div id="loadmore">
+  <a class="loadmore" href="/favorites/page/{{ page + 1 }}">更多</a>
+</div>
+</section>
+{% end %}
+{% end %}

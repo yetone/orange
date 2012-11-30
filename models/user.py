@@ -6,8 +6,7 @@ import time
 import sqlalchemy as sa
 from database import db, mBase
 import config
-from .follower import Follower
-import models
+import models as m
 from helpers import formatDate2
 
 config = config.rec()
@@ -55,15 +54,52 @@ class User(mBase):
         query = "%s?s=%s%s" % (md5email, size, config.gravatar_extra)
         return config.gravatar_base_url + query
 
+    def get_timeline(self, timesnap, page):
+        '''
+        followeder_ids = self.get_followeder_ids()
+        followeder_ids.append(self.id)
+        retweet_relationships =\
+            db.query(m.Retweet).filter(m.Retweet.user_id.in_(followeder_ids)).all()
+        retweet_post_ids = []
+        if retweet_relationships != []:
+            for r in retweet_relationships:
+                if r.post_id not in retweet_post_ids:
+                    retweet_post_ids.append(r.post_id)
+        retweets =\
+            db.query(m.Post).filter(m.Post.id.in_(retweet_post_ids)).all()
+        '''
+        '''
+        followeders = self.get_followeders()
+        origin_posts = []
+        #posts = retweets
+        followeders.append(self)
+        if followeders != []:
+            for f in followeders:
+                origin_posts += f.get_posts_and_retweets()
+        posts = {}.fromkeys(origin_posts).keys()
+        posts.sort(lambda p1, p2: -cmp(p1.get_created_in(self),
+            p2.get_created_in(self)))
+        posts = posts[((page - 1) * config.paged) : (page * config.paged)]
+        '''
+        followeder_ids = self.get_followeder_ids()
+        followeder_ids.append(self.id)
+        posts =\
+        db.query(m.Post).order_by(sa.desc(m.Post.created_at)).filter(sa.and_(m.Post.user_id.in_(followeder_ids),
+            m.Post.created_at < timesnap)).offset((page - 1) *
+            config.paged).limit(config.paged).all()
+        return posts
+
     def get_followers(self):
-        whoes = db.query(Follower).order_by(sa.desc(Follower.created_at)).filter(Follower.whom_id == self.id).all()
+        whoes =\
+            db.query(m.Follower).order_by(sa.desc(m.Follower.created_at)).filter(m.Follower.whom_id == self.id).all()
         followers = []
         for who in whoes:
             followers += [db.query(User).filter(User.id == who.who_id).first()]
         return followers
 
     def get_followeders(self):
-        whoms = db.query(Follower).order_by(sa.desc(Follower.created_at)).filter(Follower.who_id == self.id).all()
+        whoms =\
+            db.query(m.Follower).order_by(sa.desc(m.Follower.created_at)).filter(m.Follower.who_id == self.id).all()
         followeders = []
         for whom in whoms:
             followeders += [db.query(User).filter(User.id == whom.whom_id).first()]
@@ -71,33 +107,54 @@ class User(mBase):
 
     def get_notifiers(self):
         notifiers =\
-        db.query(models.Notifier).order_by(sa.desc(models.Notifier.created_at)).filter(models.Notifier.whom_id
+        db.query(m.Notifier).order_by(sa.desc(m.Notifier.created_at)).filter(m.Notifier.whom_id
                 == self.id).all()
         return notifiers
 
     def get_unread_notifiers(self):
         notifiers =\
-        db.query(models.Notifier).order_by(sa.desc(models.Notifier.created_at)).filter(sa.and_(models.Notifier.whom_id
-                == self.id, models.Notifier.status == 0)).all()
+        db.query(m.Notifier).order_by(sa.desc(m.Notifier.created_at)).filter(sa.and_(m.Notifier.whom_id
+                == self.id, m.Notifier.status == 0)).all()
         return notifiers
 
     def get_follower_ids(self):
-        whoes = db.query(Follower).order_by(sa.desc(Follower.created_at)).filter(Follower.whom_id == self.id).all()
+        whoes =\
+            db.query(m.Follower).order_by(sa.desc(m.Follower.created_at)).filter(m.Follower.whom_id == self.id).all()
         follower_ids = []
         for who in whoes:
             follower_ids.append(who.who_id)
         return follower_ids
 
     def get_followeder_ids(self):
-        whoms = db.query(Follower).order_by(sa.desc(Follower.created_at)).filter(Follower.who_id == self.id).all()
+        whoms =\
+            db.query(m.Follower).order_by(sa.desc(m.Follower.created_at)).filter(m.Follower.who_id == self.id).all()
         followeder_ids = []
         for whom in whoms:
             followeder_ids.append(whom.whom_id)
-        followeder_ids.append(self.id)
         return followeder_ids
 
+    def get_posts_and_retweets(self, page=1):
+        retweet_relationships = db.query(m.Retweet).filter(m.Retweet.user_id ==\
+                self.id).all()
+        retweet_post_ids = []
+        if retweet_relationships != []:
+            for r in retweet_relationships:
+                retweet_post_ids.append(r.post_id)
+        retweets =\
+        db.query(m.Post).filter(m.Post.id.in_(retweet_post_ids)).all()
+        posts = db.query(m.Post).filter(m.Post.user_id ==\
+                self.id).all() + retweets
+        #return posts[((page - 1) * config.paged): (page * config.paged)]
+        return posts
+
+    def get_posts(self, page=1):
+        posts =\
+        db.query(m.Post).order_by(sa.desc(m.Post.created_at)).filter(m.Post.user_id ==\
+                self.id).offset((page - 1) * config.paged).limit(config.paged).all()
+        return posts
+
     def get_posts_amount(self):
-        posts = db.query(models.Post).filter(models.Post.user_id == self.id).all()
+        posts = db.query(m.Post).filter(m.Post.user_id == self.id).all()
         return len(posts) if posts else 0
 
     def get_followers_amount(self):
@@ -108,8 +165,42 @@ class User(mBase):
         followeders = self.get_followeders()
         return len(followeders)
 
+    def get_favorites(self, page=1):
+        favorites =\
+        db.query(m.Favorite).order_by(sa.desc(m.Favorite.created_at)).filter(m.Favorite.user_id ==\
+                self.id).offset((page - 1) *
+                        config.paged).limit(config.paged).all()
+        posts = []
+        for favorite in favorites:
+            posts += [db.query(m.Post).filter(m.Post.id ==\
+                favorite.post_id).first()]
+        return posts
+
+    @property
+    def favorites(self, page=1):
+        favorites =\
+        db.query(m.Favorite).order_by(sa.desc(m.Favorite.created_at)).filter(m.Favorite.user_id ==\
+                self.id).all()
+        posts = []
+        for favorite in favorites:
+            posts += [db.query(m.Post).filter(m.Post.id ==\
+                favorite.post_id).first()]
+        return posts
+
+    def faved_it(self, post):
+        favorite =\
+        db.query(m.Favorite).filter(sa.and_(m.Favorite.user_id ==
+            self.id, m.Favorite.post_id == post.id)).first()
+        return favorite
+
+    def retweeted_it(self, post):
+        retweet = db.query(m.Post).filter(sa.and_(m.Post.type == 2,
+            m.Post.user_id == self.id, m.Post.post_id == post.id)).first()
+        return retweet
+
     def format_date(self):
         return formatDate2(self.created_at)
+
     @staticmethod
     def create_password(raw):
         salt = User.create_token(8)

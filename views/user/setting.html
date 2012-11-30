@@ -1,6 +1,7 @@
 {% extends "../base.html" %}
 
 {% block mainbar %}
+<section class="box">
   <form method="post" action="/upload/avatar" enctype="multipart/form-data" method="post">
     <fieldset>
       <legend>头像设置</legend>
@@ -33,4 +34,5 @@
       </div>
   </fieldset>
   </form>
+</section>
 {% end %}

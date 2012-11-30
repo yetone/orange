@@ -10,7 +10,7 @@ import tornado.web
 from tornado.options import define, options
 
 import config
-from controllers import site, post, user, comment
+from controllers import site, post, user, comment, uimodules
 from database import create_db
 
 config = config.rec()
@@ -20,15 +20,16 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/", site.HomeHandler),
+            (r"/page/(\d+)[/]*", site.HomeHandler),
+            (r"/start[/]*", site.StartHandler),
             (r"/websocket[/]*", site.WebSocketHandler),
             (r"/longpolling[/]*", site.LongPollingHandler),
-            (r"/page/(\d+)[/]*", site.HomeHandler),
             (r"/loadunread", site.LoadUnreadHandler),
 
             (r"/post/(\d+)[/]*", post.PostHandler),
             (r"/post/add[/]*", post.PostAddHandler),
-            (r"/post/edit/(\d+)[/]*", post.PostEditHandler),
-            (r"/post/del/(\d+)[/]*", post.PostDelHandler),
+            (r"/post/(\d+)/edit[/]*", post.PostEditHandler),
+            (r"/post/(\d+)/del[/]*", post.PostDelHandler),
 
             (r"/post/(\d+)/comment/add[/]*", comment.CommentAddHandler),
 
@@ -37,10 +38,18 @@ class Application(tornado.web.Application):
             (r"/register[/]*", user.RegisterHandler),
             (r"/notifier[/]*", user.NotifierHandler),
             (r"/notifierpolling[/]*", user.NotifierLongPollingHandler),
+            (r"/favorites[/]*", user.FavoritesShowHandler),
+            (r"/favorites/page/(\d+)[/]*", user.FavoritesShowHandler),
+            (r"/user/([A-Za-z0-9%]+)/favorites[/]*", user.UserFavoritesShowHandler),
+            (r"/user/([A-Za-z0-9%]+)/favorites/page/(\d+)[/]*", user.UserFavoritesShowHandler),
+            (r"/post/(\d+)/fav[/]*", user.FavoriteHandler),
+            (r"/post/(\d+)/retweet[/]*", user.RetweetHandler),
 
             (r"/referrers[/]*", user.ReferrerPage),
             (r"/users[/]*", user.UserListPage),
             (r"/user/([A-Za-z0-9%]+)[/]*", user.HomeHandler),
+            (r"/user/([A-Za-z0-9%]+)/posts[/]*", user.PostsHandler),
+            (r"/user/([A-Za-z0-9%]+)/posts/page/(\d+)[/]*", user.PostsHandler),
             (r"/user/profile/([A-Za-z0-9%]+)[/]*", user.UserProfileGet),
             (r"/user/([A-Za-z0-9%]+)/page/(\d+)[/]*", user.HomeHandler),
             (r"/user/([A-Za-z0-9%]+)/follow[/]*", user.FollowHandler),
@@ -55,10 +64,7 @@ class Application(tornado.web.Application):
         settings = dict(
             template_path = os.path.join(os.path.dirname(__file__), "views"),
             static_path = os.path.join(os.path.dirname(__file__), "static"),
-            ui_modules = {"TwitterForm": post.TwitterFormModule,
-                "Iterms": post.ItermsModule,
-                "Profile": user.ProfileModule,
-                "UserList": user.UserListModule},
+            ui_modules = uimodules,
             xsrf_cookies = True,
             cookie_secret = config.cookie_secret,
             autoescape = None,

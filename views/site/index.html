@@ -6,6 +6,7 @@
 <script type="text/javascript" src="{{ static_url('js/longpolling.js') }}"></script>
 {% end %}
 {% block mainbar %}
+<section class="box no-padding">
 {% if current_user %}
   {{ modules.TwitterForm() }}
 {% end %}
@@ -13,4 +14,5 @@
 <div id="loadmore">
   <a class="loadmore" href="/page/{{ page + 1 }}">更多</a>
 </div>
+</section>
 {% end %}

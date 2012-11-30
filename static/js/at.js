@@ -64,7 +64,7 @@ $(function(){
         data: names,
         tpl: "<li id='${id}' data-value='${name}'>${name} <small>${email}</small></li>"
     })
-    $('#comment-editor').atWho('@', {
+    $('.comment-editor').atWho('@', {
         data: names,
         tpl: "<li id='${id}' data-value='${name}'>${name} <small>${email}</small></li>"
     })

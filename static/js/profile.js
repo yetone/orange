@@ -28,4 +28,23 @@ $(function(){
       return false;
     }
   });
+  $('.profile-nav li').live('click', function(){
+    $('.active').removeClass('active');
+    $(this).addClass('active');
+    var url = $(this).children('a').attr('href');
+    $.get(url, function(data){
+      $('#mainbar section ul').html('');
+      //$(data).clone().hide().appendTo('#mainbar section ul').fadeIn();
+      if($.browser.webkit){
+        $(data).clone().hide().appendTo('#mainbar section ul').fadeIn();
+      } else {
+        $(data).appendTo('#mainbar section ul');
+      }
+      $('.loadmore').attr('href', url + '/page/2').html('更多');
+      if(data.length <= 2){
+        $('#loadmore').remove();
+      }
+    });
+    return false;
+  });
 });

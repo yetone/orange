@@ -1,0 +1,8 @@
+{% if posts != [] %}
+<section class="box no-padding">
+{{ modules.Iterms(posts) }}
+<div id="loadmore">
+  <a class="loadmore" href="/favorites/page/{{ page + 1 }}">更多</a>
+</div>
+</section>
+{% end %}

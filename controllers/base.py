@@ -7,10 +7,20 @@ import config
 from database import db
 
 from models import User
+import controllers
 
 config = config.rec()
 
 class BaseHandler(tornado.web.RequestHandler):
+    def render(self, *args, **kargs):
+        kargs.update(dict(user_count=controllers.user.get_user_count()))
+        super(BaseHandler,
+                self).render(*args, **kargs)
+
+    def on_finish(self):
+        db.close()
+        db.rollback()
+
     def get_current_user(self):
         user_json = self.get_secure_cookie("user")
         if user_json:

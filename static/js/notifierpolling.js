@@ -13,13 +13,15 @@ var upnotifier = {
   onSuccess: function(data, dataStatus){
     try{
       if(parseInt(data) != 0){
-        var content = "<div class='notifier'><a href='/notifier'>有" + data + "个新提醒</a></div>";
+        var content = "<div class='notifier'><a href='/notifier'>有<span class='notifier-count'>" + data + "</span>个新提醒</a></div>";
         var item = $('.notifier');
+        var notifiercount = $('.notifier-count');
         var title = $('title');
-        if(item.length > 0){
-          item.remove();
+        if(item.length != 0){
+          notifiercount.html(data);
+        } else if (item.length == 0) {
+          $(content).clone().hide().prependTo('#mainbar section').slideDown();
         }
-        $('#mainbar').prepend(content);
         var title_content = title.html();
         if(title_content.indexOf(')') == -1){
           title.html('(' + data + ')' + ' ' + title_content);

@@ -1,0 +1,20 @@
+{% extends "../base.html" %}
+
+{% block content %}
+<section class="box no-padding">
+  <div class="user-list">
+  {% for user in users %}
+    <div class="user">
+      <a href="/user/{{ user.name }}">
+        <div class="avatar">
+          <img src="{{ user.get_avatar() }}">
+        </div>
+        <div class="name">
+          <span>{{ escape(user.name) }}</span>
+        </div>
+    </a>
+    </div>
+  {% end %}
+  </div>
+</section>
+{% end %}

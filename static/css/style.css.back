@@ -1,0 +1,497 @@
+@import url(http://fonts.googleapis.com/css?family=Ubuntu);
+body {
+  margin: 0;
+  background-color: #ffffa5;
+  font-family: 'Ubuntu',"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.wrapper {
+  margin: 0 auto;
+  width: 920px;
+}
+
+h1, h2, h3, h4, h5 {
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+a, a:hover, a:visited {
+  text-decoration: none;
+}
+
+a, a:visited {
+  color: #666;
+}
+a:hover, a:focus {
+  color: rgba(173, 58, 43, 1);
+}
+
+#nav {
+  background-color: #FF7600;
+  padding: 10px;
+  overflow: auto;
+}
+
+#nav a {
+  text-decoration: none;
+  color: black;
+}
+
+#nav .band {
+  float: left;
+  width: 400px;
+}
+
+#nav .menu {
+  float: right;
+  margin-top: 10px;
+  margin-right: 20px;
+}
+
+#nav .menu a {
+  color: #333;
+  font-size: 14px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 6px 12px;
+  background-color: #ff8c00;
+  border: 0;
+  cursor: pointer;
+  border-radius: 0;
+  font-weight: bold;
+}
+#nav .menu a:hover{
+  background: #ff9a35;
+  text-decoration: none;
+}
+#content {
+  background-color: #ffd573;
+}
+
+#mainbar {
+  background-color: #ffd573;
+  padding: 15px 25px;
+  float: left;
+  width: 68%;
+}
+
+#sidebar {
+  background-color: #ffe373;
+  float: right;
+  padding: 15px 25px;
+  width: 20%;
+}
+
+label {
+  float: left;
+  width: 140px;
+  padding-top: 5px;
+  padding-right: 8px;
+  text-align: right;
+}
+
+.form-group {
+  padding-top: 10px;
+}
+
+.form-action {
+  margin-top: 20px;
+  background-color: #ffdf73;
+  padding: 15px 0 15px 160px;
+}
+
+.twitter-action {
+  padding: 15px;
+  width: 500px;
+}
+
+#twitter {
+  width: 450px;
+  padding: 10px 25px;
+}
+#twitter textarea {
+  width: 500px;
+}
+.twitter-action input {
+  float: right;
+  margin-right: 40px;
+}
+
+.btn {
+  color: #333;
+  font-size: 14px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 6px 12px;
+  background-color: #ff8c00;
+  border: 0;
+  cursor: pointer;
+  border-radius: 0;
+  font-weight: bold;
+}
+
+.btn:hover, .btn:active {
+  background-color: #FF7000;
+  text-decoration: none;
+}
+
+.unfo {
+  background-color: #FFFFA5;
+}
+
+.mini-btn {
+  font-size: 12px;
+  padding: 6px 8px;
+}
+
+input, textarea {
+  color: #555;
+  padding: 6px 8px;
+  border: 1px solid #FFFFAE;
+  border-radius: 0;
+  font-family: 'Helvetica Neue Light',HelveticaNeue-Light,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+  -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+  background-color: #ffffAE;
+}
+
+input:focus, textarea:focus {
+  border-color: rgba(230, 128, 61, 0.8);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(226, 163, 30, 0.6);
+  outline: 0;
+}
+
+fieldset {
+  border: 0;
+}
+
+legend {
+  padding: 5px 10px;
+  background-color: #FF7600;
+}
+
+.item {
+  padding: 15px;
+  background-color: #ffe873;
+  margin: 12px 0px;
+}
+
+.mini-profile .fullname {
+  display: block;
+  color: #333;
+}
+
+.mini-profile a:hover .fullname {
+  color: rgba(173, 58, 43, 1);
+}
+
+.profile-summary {
+  padding-bottom: 12px;
+}
+
+.profile-summary .mation {
+  margin-left: 60px;
+}
+
+.profile-summary .avatar {
+  float: left;
+}
+
+.profile-stats {
+  margin-top: 8px;
+  background-color: #fff273;
+}
+
+.stats {
+  font-size: 12px;
+  overflow: hidden;
+}
+
+ul {
+  list-style: none;
+}
+
+ul, ol {
+  padding: 0;
+  margin: 0;
+}
+
+.stats li {
+  display: inline;
+}
+
+.stats a {
+  float: left;
+  padding: 7px 12px;
+  color: #555;
+}
+
+.stats a strong {
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+.stats a:hover strong {
+  color: rgba(173, 58, 43, 1);
+}
+
+small {
+  font-size: 11px;
+  color: #555;
+  margin-left: 5px;
+}
+
+.item .avatar {
+  float: left;
+}
+
+.twitter-content {
+  overflow: hidden;
+  padding: 0 10px;
+}
+
+.user-item .profile-action a {
+  font-size: 11px;
+  padding: 3px 10px 6px 10px;
+  margin-bottom: 30px;
+}
+
+.user-item .mini-profile-content {
+  margin-left: 56px;
+  max-height: 1px;
+  font-size: 14px;
+}
+
+.user-item .mini-profile-content .content {
+  margin-right: 120px;
+  font-size: 12px;
+  color: #555;
+}
+
+.user-item {
+  overflow: hidden;
+}
+
+.name {
+  color: #333;
+}
+
+.name a {
+  color: #333;
+}
+
+.comment-wrap {
+  display: none;
+  padding-top: 10px;
+}
+
+.comment-iterm {
+  margin: 8px 0;
+  padding: 10px;
+  background-color: #ffda73;
+}
+.twitter-comments {
+  padding-left: 58px;
+  padding-right: 30px;
+}
+.twitter-comment-textbox {
+  margin-top: 10px;
+  margin-left: 58px;
+}
+
+.comment-content {
+  margin-left: 32px;
+}
+
+.comment-content .content {
+  font-size: 13px;
+  color: #333;
+}
+
+.comment-content .info {
+  font-size: 11px;
+}
+
+.content {
+  padding: 5px 0;
+}
+
+.info {
+  overflow: hidden;
+  min-height: 21px;
+}
+
+.action {
+  display: inline;
+  float: right;
+}
+
+.action ul {
+  display: none;
+}
+
+.action li {
+  display: inline;
+}
+
+.action a {
+  color: #a66b00;
+  font-size: 12px;
+  padding: 3px 6px;
+  background-color: #ffd140;
+  border: 0;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.action a:hover{
+  background: #ff8500;
+  color: #333;
+  text-decoration: none;
+}
+
+.big-profile {
+  padding: 15px 25px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.big-profile .avatar {
+  float: left;
+}
+
+.big-profile .mation {
+  max-height: 1px;
+  margin-left: 142px;
+}
+
+.profile-action {
+  float: right;
+  margin-top: 6px;
+}
+
+.description {
+  margin: 10px 0;
+  font-size: 13px;
+  color: #333;
+  margin-right: 160px;
+}
+
+.website {
+  font-size: 12px;
+}
+
+a.btn {
+  color: #333;
+}
+
+.profile-action .stats {
+  margin-top: 10px;
+  max-width: 75px;
+}
+
+.profile-action .stats li {
+  display: block;
+}
+
+.profile-action .stats li strong {
+  display: inline;
+  margin-right: 5px;
+}
+
+.profile-action .stats li a {
+  padding: 3px 6px;
+}
+
+#loading, #nomoreresults {
+  display: none;
+}
+
+#loadmore {
+  margin-top: 20px;
+  text-align: center;
+}
+
+#loadmore a {
+  background-color: #ff9200;
+  padding: 8px 40px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+#loadmore a:hover {
+  color: rgba(173, 58, 43, 1);
+}
+
+#loadunread {
+  text-align: center;
+  margin: 20px auto;
+}
+
+#loadunread a {
+  background-color: #ff9200;
+  padding: 8px 40px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+.post-title p {
+  display: inline;
+}
+
+.notifier {
+  text-align: center;
+}
+
+.notifier a {
+  font-size: 13px;
+  padding: 6px 10px;
+  background-color: #ffc740;
+  color: #333;
+}
+
+.notifier a:hover {
+  background-color: #ff8c00;
+}
+
+.unread {
+  border: 1px solid rgba(230, 128, 61, 0.8);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(226, 163, 30, 0.6);
+  outline: 0;
+}
+
+#start {
+  padding: 80px 20px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+#floater {
+  overflow: hidden;
+}
+#floater .avatar {
+  float: left;
+}
+
+#floater .floater-content {
+  float: left;
+  margin-left: 4px;
+  max-height: 1px;
+}
+
+#floater .profile-action {
+  margin-left: 10px;
+}
+
+.box {
+  box-shadow: 1px 2px 3px #ddd;
+}

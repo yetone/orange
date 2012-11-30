@@ -19,11 +19,15 @@ import sqlalchemy as sa
 from extensions import md
 from sqlalchemy.sql.expression import func, select
 
-from models import User, Post, Follower
+from models import User, Post, Follower, Favorite, Retweet
 config = config.rec()
+
+def get_user_count():
+    return len(db.query(User).all())
 
 def get_unread_count(user):
     return len(user.get_unread_notifiers())
+
 
 class UserProfileGet(BaseHandler):
     @tornado.web.authenticated
@@ -43,8 +47,12 @@ class UserListPage(BaseHandler):
     def get(self):
         users = db.query(User).all()
         names = [x.name for x in users]
-        self.write("%s" % tornado.escape.json_encode(names))
-        #self.write("%s" % names)
+        if self.is_ajax():
+            self.write("%s" % tornado.escape.json_encode(names))
+            #self.write("%s" % names)
+        else:
+            self.render("user/list.html", users=users)
+        return
 
 class ReferrerPage(BaseHandler):
     @tornado.web.authenticated
@@ -72,6 +80,17 @@ class HomeHandler(BaseHandler):
             self.render("user/index.html", user=user, posts=posts,
                     formatDate=helpers.formatDate, page=page)
             return
+
+class PostsHandler(BaseHandler):
+    def get(self, user_name, page=1):
+        page = int(page)
+        user = db.query(User).filter(User.name == user_name).first()
+        posts = user.get_posts(page=page)
+        if self.is_ajax():
+            self.render("site/ajaxpage.html", posts=posts, page=page, user=user)
+        else:
+            self.render("user/posts.html", posts=posts, page=page, user=user)
+        return
 
 class AvatarUploadHandler(BaseHandler):
     @tornado.web.authenticated
@@ -121,18 +140,18 @@ class AvatarUploadHandler(BaseHandler):
         tmp_name3 = image_path + timestamp + 'x48.' + image_format
         tmp_name4 = image_path + timestamp + 'x96.' + image_format
         tmp_name5 = image_path + timestamp + 'x128.' + image_format
-        image_two = copy.copy(image_one)
-        image_three = copy.copy(image_one)
-        image_four = copy.copy(image_one)
-        image_five = copy.copy(image_one)
+        image_two = image_one.copy()
+        image_three = image_one.copy()
+        image_four = image_one.copy()
+        image_five = image_one.copy()
         image_one.save(tmp_name)
-        image_two.thumbnail((24, 24), resample = 1)
+        image_two.thumbnail((24, 24), Image.ANTIALIAS)
         image_two.save(tmp_name2)
-        image_three.thumbnail((48, 48), resample = 1)
+        image_three.thumbnail((48, 48), Image.ANTIALIAS)
         image_three.save(tmp_name3)
-        image_four.thumbnail((96, 96), resample = 1)
+        image_four.thumbnail((96, 96), Image.ANTIALIAS)
         image_four.save(tmp_name4)
-        image_five.thumbnail((128, 128), resample = 1)
+        image_five.thumbnail((128, 128), Image.ANTIALIAS)
         image_five.save(tmp_name5)
         tmp_file.close()
         user.avatar = tmp_name
@@ -226,11 +245,80 @@ class NotifierHandler(BaseHandler):
         user = self.get_current_user()
         notifiers = user.get_notifiers()
         self.render("user/notifier.html", notifiers = notifiers)
-        if notifiers != []:
-            for n in notifiers:
+        unread_notifiers = user.get_unread_notifiers()
+        if unread_notifiers != []:
+            for n in unread_notifiers:
                 n.status = 1
         db.commit()
         return
+
+class FavoriteHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self, post_id):
+        post_id = int(post_id)
+        user = self.get_current_user()
+        post = db.query(Post).get(post_id)
+        if post and post.user_id != user.id:
+            favorite = db.query(Favorite).filter(sa.and_(Favorite.user_id ==\
+                user.id, Favorite.post_id == post.id)).first()
+            if favorite:
+                db.delete(favorite)
+            else:
+                favorite = Favorite(user_id = user.id, post_id = post.id)
+                db.add(favorite)
+            db.commit()
+        else:
+            self.redirect(self.next_url())
+        return
+
+class RetweetHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self, post_id):
+        post_id = int(post_id)
+        user = self.current_user
+        post = db.query(Post).get(post_id)
+        if post and post.type != 2 and post.user_id != user.id:
+            re_post = db.query(Post).filter(sa.and_(Post.type == 2,
+                Post.user_id == user.id, Post.post_id == post_id)).first()
+            if re_post:
+                db.delete(re_post)
+            else:
+                re_post = Post(user_id = user.id, content = '', origin_content
+                        = '', type = 2, post_id = post.id)
+                db.add(re_post)
+            db.commit()
+        else:
+            self.redirect(self.next_url())
+        return
+
+class FavoritesShowHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self, page=1):
+        page = int(page)
+        user = self.get_current_user()
+        posts = user.get_favorites(page=page)
+        if not self.is_ajax():
+            self.render("user/favorite.html", posts = posts, page = page,
+                    user=user)
+            return
+        else:
+            self.render("site/ajaxpage.html", posts = posts, page = page,
+                    user=user)
+            return
+
+class UserFavoritesShowHandler(BaseHandler):
+    def get(self, user_name, page=1):
+        page = int(page)
+        user = db.query(User).filter(User.name == user_name).first()
+        posts = user.get_favorites(page=page)
+        if not self.is_ajax():
+            self.render("user/favorite.html", posts = posts, page = page,
+                    user=user)
+            return
+        else:
+            self.render("site/ajaxpage.html", posts = posts, page = page,
+                    user=user)
+            return
 
 class NotifierLongPollingHandler(BaseHandler):
     @tornado.web.asynchronous
@@ -330,10 +418,3 @@ class RegisterHandler(BaseHandler):
             self.redirect('/referrers')
             return
 
-class ProfileModule(tornado.web.UIModule):
-    def render(self, user):
-        return self.render_string("modules/profile.html", user=user)
-
-class UserListModule(tornado.web.UIModule):
-    def render(self, users):
-        return self.render_string("modules/userlist.html", users=users)

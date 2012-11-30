@@ -2,6 +2,7 @@ function getCookie(name) {
   var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
   return r?r[1]:undefined;
 }
+
 $(function(){
   $('.mention').live('mouseover', function(e){
     $('#floater').remove();
@@ -22,7 +23,7 @@ $(function(){
         $('#floater').css({
           "padding": "6px 10px",
           "position":"absolute",
-          "background-color":"#FFFFA5",
+          "background-color":"#fff",
           "box-shadow":"0px 0px 10px rgba(0,0,0,0.8)",
           "min-width":"160px",
           "top":top,
@@ -39,25 +40,81 @@ $(function(){
   );
   $('.reply').live('click',
     function(){
-      $(this).parents('.item').find('.comment-wrap').toggle();
+      $(this).parents('.item').find('.comment-wrap').slideToggle();
     }
   );
+  $('.del').live('click', function(){
+    var idx = $(this).parents('li.twitter-item').attr('id');
+    var id = idx.substr(idx.indexOf('_') + 1, idx.length);
+    $('.lightbox').remove();
+    $('#confirm-box').remove();
+    var item = $(this).parents('li.twitter-item').html();
+    var markup = [
+      '<div class="lightbox"></div>',
+      '<section id="confirm-box" class="box no-padding">',
+      '<header>确定要删除这条推文吗?</header>',
+      '<div class="confirm-content"></div>',
+      '<div class="confirm-action"><a id="del_',
+      id,
+      '" class="ok btn mini-btn" href="#;">确认</a>',
+      '<a class="cancle btn mini-btn" href="#;">取消</a></div>',
+      '</section>'
+    ].join('');
+    $(markup).hide().appendTo('body').fadeIn();
+    return false;
+  });
+  $('#confirm-box .ok').live('click', function(){
+    var idx = $(this).attr('id');
+    var id = idx.substr(idx.indexOf('_') + 1, idx.length);
+    var url = '/post/' + id + '/del';
+    $.get(url);
+    var post_count_area = $('#sidebar .mini-profile .stats li:first a strong');
+    var post_count = parseInt(post_count_area.html());
+    post_count -= 1;
+    post_count_area.html(post_count);
+    $('.lightbox').fadeOut();
+    $('#confirm-box').fadeOut();
+    $('#post_' + id).fadeOut();
+    return false;
+  });
+  $('.display').live('click', function(){
+    $(this).next('.hide').toggle();
+    $(this).remove();
+    return false;
+  });
+  $('#confirm-box .cancle').live('click', function(){
+    $('.lightbox').fadeOut();
+    $('#confirm-box').fadeOut();
+    return false;
+  });
+  $('input.comment-editor').live('keydown', function(e){
+    if(e.ctrlKey && e.keyCode == 13){
+      $(this).next('input.btn')[0].click();
+      //alert($(this).next('input')[0].value);
+      return false;
+    }
+  });
   $('.twitter-action .btn').live('click',function(){
     $(this).val('正在发布...');
     var content = $(this).parents('form').children('textarea').val();
     var args = {"content": content};
     args._xsrf=document.cookie.match("\\b" + "_xsrf" + "=([^;]*)\\b")[1];
     $.post("/post/add", $.param(args), function(data){
-        data = eval("(" + data + ")");
-        var precontent = '<div class="item"><a href="/user/'+ data.username + '"><img class="avatar" src="' + data.avatar +'"></a><div class="twitter-content"><div class="name"><a href="/user/' + data.username + '"><strong>' + data.username + '</strong></a></div><div class="content">' + data.content + '</div><div class="info"><small>' + data.time + '</small><div class="action"><ul style="display: none;"><li><a class="reply" href="#;">reply</a></li><li><a class="retweet" href="#;">retweet</a></li><li><a class="fav" href="#;">fav</a></li></ul></div></div></div><div class="comment-wrap"><div class="twitter-comment-textbox"><form method="post" action="/post/' + data.id + '/comment/add"><input id="comment-editor type="text" name="comment-content" size="35"><input class="btn mini-btn" type="submit" value="发布"><input type="hidden" name="_xsrf" value="' + args._xsrf + '"></form></div><div class="twitter-comments"></div></div>';
-        var loadunread = $('.loadunread');
-        if(loadunread.length > 0){
-          loadunread.click();
-        } else {
-          $('.items').prepend(precontent);
-        }
+      data = eval("(" + data + ")");
+      var precontent = '<li id="post_'+ data.id + '" class="item twitter-item"><a href="/user/'+ data.username + '"><img class="avatar" src="' + data.avatar +'"></a><div class="twitter-content"><div class="name"><a href="/user/' + data.username + '"><strong>' + data.username + '</strong></a></div><div class="content">' + data.content + '</div><div class="info"><small>' + data.time + '</small><div class="action"><ul style="display: none;"><li><a class="reply" href="#;">reply</a></li><li><a class="del" href="/post/' + data.id + '/del">del</a></li><li><a class="fav" href="/post/' + data.id + '/fav">fav</a></li></ul></div></div></div><div class="comment-wrap"><div class="twitter-comment-textbox"><form method="post" action="/post/' + data.id + '/comment/add"><input class="comment-editor" type="text" name="comment-content" size="35"><input class="btn mini-btn comment-submit" type="submit" value="发布"><input type="hidden" name="_xsrf" value="' + args._xsrf + '"></form></div><div class="twitter-comments"></div></li>';
+      //var precontent = data;
+      var loadunread = $('.loadunread');
+      if(loadunread.length > 0){
+        loadunread.click();
+      } else {
+        $(precontent).clone().hide().prependTo('.twitter-items').slideDown();
+      }
+      $('.twitter-action .btn').val('发布');
     });
-    $(this).val('发布');
+    var post_count_area = $('#sidebar .mini-profile .stats li:first a strong');
+    var post_count = parseInt(post_count_area.html());
+    post_count += 1;
+    post_count_area.html(post_count);
     $(this).parents('form').children('textarea').val('');
     return false;
   });
@@ -71,11 +128,11 @@ $(function(){
       args._xsrf=document.cookie.match("\\b" + "_xsrf" + "=([^;]*)\\b")[1];
       $.post(url, $.param(args), function(data){
         data = eval("(" + data + ")");
-        var precontent = "<div class='comment-iterm'><a href='/user/" + data.username + "'><img class='avatar' src='" + data.avatar + "'></a><div class='comment-content'><div class='name'><strong>" + data.username + "</strong></div><div class='content'>" + data.content + "</div><div class='info'><small>" + data.time +" </small></div></div>";
-        items.prepend(precontent);
+        var precontent = "<li class='comment-iterm'><a href='/user/" + data.username + "'><img class='avatar' src='" + data.avatar + "'></a><div class='comment-content'><div class='name'><strong>" + data.username + "</strong></div><div class='content'>" + data.content + "</div><div class='info'><small>" + data.time +" </small></div></li>";
+        $(precontent).clone().hide().prependTo(items).slideDown();
       });
-      $(this).val('发布');
       $(this).prev().val('');
+      $(this).val('发布');
       return false;
   });
   $('.loadmore').click(function(){
@@ -94,19 +151,52 @@ $(function(){
       } else {
         loadmore.html('更多');
       }
-      $('.items').append(data);
+      if($.browser.webkit){
+        $(data).clone().hide().appendTo('.twitter-items').slideDown();
+      } else {
+        $(data).appendTo('.twitter-items');
+      }
       return false;
     });
     return false;
   });
-  $('.loadunread').live('click', function(){
-    $(this).html('正在加载...');
+  $('#loadunread').live('click', function(){
     $.get('/loadunread', function(data){
-      $('.loadunread').remove();
-      $('.items').prepend(data);
-      return false;
+      $('.loadunread').html('正在加载...');
+      if($.browser.webkit){
+        $(data).clone().hide().prependTo('.items').fadeIn();
+      } else {
+        $(data).prependTo('.items');
+      }
+      $('.loadunread').html('加载完毕');
+      $('#loadunread').hide();
     });
-    $('.loadunread').html('已加载完毕');
+    return false;
+  });
+  $('.fav').live('click', function(){
+    var url = $(this).attr('href');
+    $.get(url);
+    if($(this).html()=='fav'){
+      $(this).html('faved').addClass('faved');
+    } else {
+      $(this).html('fav').removeClass('faved');
+    }
+    return false;
+  });
+  $('.retweet').live('click', function(){
+    var url = $(this).attr('href');
+    var post_count_area = $('#sidebar .mini-profile .stats li:first a strong');
+    var post_count = parseInt(post_count_area.html());
+    $.get(url);
+    if($(this).html()=='retweet'){
+      $(this).html('retweeted').addClass('retweeted');
+      post_count += 1;
+      post_count_area.html(post_count);
+    } else {
+      $(this).html('retweet').removeClass('retweeted');
+      post_count -= 1;
+      post_count_area.html(post_count);
+    }
     return false;
   });
 });

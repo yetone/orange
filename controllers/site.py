@@ -13,7 +13,7 @@ from database import db
 
 import sqlalchemy as sa
 
-from models import Post, User
+from models import Post
 
 config = config.rec()
 
@@ -30,30 +30,30 @@ def get_unread_count(hi, user):
                 > nrtimesnap).all()
     return len(posts)
 
+class StartHandler(BaseHandler):
+    def get(self):
+        self.render("site/start.html")
+
 class HomeHandler(BaseHandler):
     def get(self, page=1):
         page = int(page)
-        current_user = self.get_current_user()
-        if not self.request.headers.has_key('X-Requested-With'):
+        user = self.current_user
+        if not self.is_ajax():
             self.set_timesnap()
             self.set_nrtimesnap()
             timesnap = int(time.time())
         else:
             timesnap = self.get_timesnap()
-        if not current_user:
+        if not user:
             posts =\
             db.query(Post).order_by(sa.desc(Post.created_at)).filter(Post.created_at
                     < timesnap).offset((page - 1) *
-                config.paged).limit(config.paged).limit(9)
+                config.paged).limit(config.paged).all()
             self.render("site/start.html", posts=posts)
             return
         else:
-            followeder_ids = current_user.get_followeder_ids()
-            posts =\
-            db.query(Post).order_by(sa.desc(Post.created_at)).filter(sa.and_(Post.user_id.in_(followeder_ids),
-                Post.created_at < timesnap)).offset((page - 1) *
-                config.paged).limit(config.paged).all()
-        if self.request.headers.has_key('X-Requested-With'):
+            posts = user.get_timeline(timesnap, page)
+        if self.is_ajax():
             self.render("site/ajaxpage.html", posts=posts, page=page)
             return
         else:
@@ -97,7 +97,7 @@ class LongPollingHandler(BaseHandler):
 class LoadUnreadHandler(BaseHandler):
     def get(self):
         if self.request.headers.has_key('X-Requested-With'):
-            nrtimesnap = self.get_timesnap()
+            nrtimesnap = self.get_nrtimesnap()
             self.set_nrtimesnap()
             user = self.get_current_user()
             if user:

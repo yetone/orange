@@ -1,9 +1,13 @@
 {% extends "../base.html" %}
 
 {% block content %}
+<section class="box">
 <div id="start">
-  <span>论欢迎页面的重要性(・ε・●)</span>
+  <span>论欢迎页面的重要性(・ε・●)</span><br />
+  <a href="/users"><span>共{{ user_count }}用户</span></a>
 </div>
 <div id="items">
 </div>
+</section>
 {% end %}
+{% block footer %}{% end %}

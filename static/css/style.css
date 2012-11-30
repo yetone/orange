@@ -1,8 +1,8 @@
 @import url(http://fonts.googleapis.com/css?family=Ubuntu);
 body {
   margin: 0;
-  background-color: #ffffa5;
   font-family: 'Ubuntu',"Helvetica Neue",Helvetica,Arial,sans-serif;
+  background-image: url(/static/img/bg.png);
 }
 
 .wrapper {
@@ -25,14 +25,23 @@ a, a:hover, a:visited {
 a, a:visited {
   color: #666;
 }
-a:hover, a:focus {
+a:hover, a:focus, .name a:hover {
   color: rgba(173, 58, 43, 1);
 }
 
 #nav {
-  background-color: #FF7600;
+  margin: 0 auto;
+  width: 900px;
+  background-color: #ff8f2f;
+  background-image: -moz-linear-gradient(top,#ff8f2f,#ff7600);
+  background-image: -webkit-gradient(linear,0 0,0 100%,from(#ff8f2f),to(#ff7600));
+  background-image: -webkit-linear-gradient(top,#ff8f2f,#ff7600);
+  background-image: -o-linear-gradient(top,#ff8f2f,#ff7600);
+  background-image: linear-gradient(to bottom,#ff8f2f,#ff7600);
   padding: 10px;
-  overflow: auto;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25);
 }
 
 #nav a {
@@ -43,12 +52,17 @@ a:hover, a:focus {
 #nav .band {
   float: left;
   width: 400px;
+  margin-left: 14px;
 }
 
+.band h1 {
+  color: #333;
+  text-shadow: 0 1px 0 #CE4213;
+}
 #nav .menu {
   float: right;
   margin-top: 10px;
-  margin-right: 20px;
+  margin-right: 30px;
 }
 
 #nav .menu a {
@@ -62,27 +76,31 @@ a:hover, a:focus {
   cursor: pointer;
   border-radius: 0;
   font-weight: bold;
+  background-color: #ff8f2f;
+  background-image: -moz-linear-gradient(top,#ff9a35, #ff8c00);
+  background-image: -webkit-gradient(linear,0 0,0 100%,from(#ff9a35),to(#ff8c00));
+  background-image: -o-linear-gradient(top,#ff9a35, #ff8c00);
+  background-image: linear-gradient(to bottom,#ff9a35, #ff8c00);
+  background-image: -webkit-linear-gradient(top, #ff9a35, #ff8c00);
 }
 #nav .menu a:hover{
   background: #ff9a35;
   text-decoration: none;
+  background-image: -webkit-linear-gradient(top, #ff8c00, #ff9a35);
 }
 #content {
-  background-color: #ffd573;
+  overflow: auto;
 }
 
 #mainbar {
-  background-color: #ffd573;
-  padding: 15px 25px;
   float: left;
-  width: 68%;
+  width: 690px;
+  margin-bottom: 30px;
 }
 
 #sidebar {
-  background-color: #ffe373;
   float: right;
-  padding: 15px 25px;
-  width: 20%;
+  width: 220px;
 }
 
 label {
@@ -99,8 +117,8 @@ label {
 
 .form-action {
   margin-top: 20px;
-  background-color: #ffdf73;
   padding: 15px 0 15px 160px;
+  background-color: whiteSmoke;
 }
 
 .twitter-action {
@@ -110,14 +128,14 @@ label {
 
 #twitter {
   width: 450px;
-  padding: 10px 25px;
+  padding: 20px 25px 10px 25px;
+  margin-bottom: 20px;
 }
 #twitter textarea {
   width: 500px;
 }
 .twitter-action input {
   float: right;
-  margin-right: 40px;
 }
 
 .btn {
@@ -126,20 +144,28 @@ label {
   text-align: center;
   vertical-align: middle;
   padding: 6px 12px;
-  background-color: #ff8c00;
-  border: 0;
+  border: 1px #dcd solid;
   cursor: pointer;
   border-radius: 0;
   font-weight: bold;
+  background-color: rgba(238, 238, 238, 0.65);
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.13);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(238, 238, 238, 0.09)), color-stop(100%,rgba(204, 204, 204, 0.93)));
+  text-shadow: 0 1px 0 #D6D3C7;
 }
 
 .btn:hover, .btn:active {
-  background-color: #FF7000;
   text-decoration: none;
+  background-color: #fff;
 }
 
 .unfo {
   background-color: #FFFFA5;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255, 247, 223, 0.09)), color-stop(100%,rgba(255, 225, 71, 0.93)));
+}
+
+.unfo:hover {
+  background-color: #FFF;
 }
 
 .mini-btn {
@@ -150,12 +176,13 @@ label {
 input, textarea {
   color: #555;
   padding: 6px 8px;
-  border: 1px solid #FFFFAE;
-  border-radius: 0;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   font-family: 'Helvetica Neue Light',HelveticaNeue-Light,'Helvetica Neue',Helvetica,Arial,sans-serif;
   -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
   -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
-  background-color: #ffffAE;
+  transition: border linear 0.2s,box-shadow linear 0.2s;
+  border: 1px solid #CCC;
+  border-radius: 3px;
 }
 
 input:focus, textarea:focus {
@@ -169,14 +196,23 @@ fieldset {
 }
 
 legend {
-  padding: 5px 10px;
-  background-color: #FF7600;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 27px;
+  font-size: 19.5px;
+  line-height: 36px;
+  color: #333;
+  border: 0;
+  border-bottom: 1px solid #eee;
 }
 
 .item {
-  padding: 15px;
-  background-color: #ffe873;
-  margin: 12px 0px;
+  padding: 15px 20px;
+  border-bottom: 1px #ded solid;
+}
+
+.twitter-item {
+  min-height: 60px;
 }
 
 .mini-profile .fullname {
@@ -189,7 +225,8 @@ legend {
 }
 
 .profile-summary {
-  padding-bottom: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px #ded dashed;
 }
 
 .profile-summary .mation {
@@ -201,8 +238,6 @@ legend {
 }
 
 .profile-stats {
-  margin-top: 8px;
-  background-color: #fff273;
 }
 
 .stats {
@@ -287,23 +322,32 @@ small {
 
 .comment-wrap {
   display: none;
-  padding-top: 10px;
+  margin-top: 10px;
+  padding-top: 5px;
+  border-left: 3px solid #ded;
+  margin-left: 36px;
 }
 
 .comment-iterm {
   margin: 8px 0;
   padding: 10px;
-  background-color: #ffda73;
-}
-.twitter-comments {
-  padding-left: 58px;
-  padding-right: 30px;
-}
-.twitter-comment-textbox {
-  margin-top: 10px;
-  margin-left: 58px;
+  border-bottom: 0;
+  border-top: 1px #ded dashed;
 }
 
+.twitter-comments {
+  padding-left: 10px;
+  padding-right: 30px;
+}
+
+.twitter-comment-textbox {
+  margin-top: 10px;
+  margin-left: 20px;
+}
+
+.twitter-comment-textbox form {
+  margin-bottom: 15px;
+}
 .comment-content {
   margin-left: 32px;
 }
@@ -340,19 +384,20 @@ small {
 }
 
 .action a {
-  color: #a66b00;
+  color: #555;
+  text-shadow: 0px 1px 0px white;
   font-size: 12px;
   padding: 3px 6px;
-  background-color: #ffd140;
-  border: 0;
+  background-color: #eee;
   cursor: pointer;
   border-radius: 0;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#EEE), color-stop(100%,#CCC));
 }
 
 .action a:hover{
-  background: #ff8500;
-  color: #333;
+  color: #000;
   text-decoration: none;
+  background-color: #dadada;
 }
 
 .big-profile {
@@ -406,6 +451,7 @@ a.btn {
 
 .profile-action .stats li a {
   padding: 3px 6px;
+  white-space: nowrap;
 }
 
 #loading, #nomoreresults {
@@ -415,14 +461,15 @@ a.btn {
 #loadmore {
   margin-top: 20px;
   text-align: center;
+  min-height: 45px;
 }
 
 #loadmore a {
-  background-color: #ff9200;
-  padding: 8px 40px;
+  padding: 10px 140px;
   font-size: 14px;
   font-weight: bold;
   color: #333;
+  border: 1px solid #ded;
 }
 
 #loadmore a:hover {
@@ -430,13 +477,16 @@ a.btn {
 }
 
 #loadunread {
+  background-color: #eee;
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, .05);
   text-align: center;
   margin: 20px auto;
+  padding: 10px;
+  cursor: pointer;
 }
 
 #loadunread a {
-  background-color: #ff9200;
-  padding: 8px 40px;
+  padding: 8px 140px;
   font-size: 14px;
   font-weight: bold;
   color: #333;
@@ -452,18 +502,23 @@ a.btn {
 
 .notifier a {
   font-size: 13px;
-  padding: 6px 10px;
-  background-color: #ffc740;
+  padding: 6px 20px;
   color: #333;
+  border: 1px solid #cdc;
 }
 
 .notifier a:hover {
-  background-color: #ff8c00;
+  color: #222;
+  background-color: #ff8f2f;
+  background-image: -moz-linear-gradient(top,#ff8f2f,#ff7600);
+  background-image: -webkit-gradient(linear,0 0,0 100%,from(#ff8f2f),to(#ff7600));
+  background-image: -webkit-linear-gradient(top,#ff8f2f,#ff7600);
+  background-image: -o-linear-gradient(top,#ff8f2f,#ff7600);
+  background-image: linear-gradient(to bottom,#ff8f2f,#ff7600);
 }
 
 .unread {
-  border: 1px solid rgba(230, 128, 61, 0.8);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(226, 163, 30, 0.6);
+  border-right: 4px solid rgba(230, 128, 61, 0.8);
   outline: 0;
 }
 
@@ -489,4 +544,181 @@ a.btn {
 }
 
 #floater .profile-action {
+  margin-left: 10px;
+}
+
+.box {
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
+  background-color: white;
+}
+
+section {
+  padding: 14px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+section.no-padding {
+  padding: 0;
+}
+
+section.no-hidden {
+  overflow: auto;
+}
+
+section.no-margin {
+  margin-bottom: 0;
+}
+
+footer {
+  margin-top: 30px;
+  padding: 10px 0 5px;
+  background-color: white;
+  min-height: 68px;
+  border-top: 1px solid #bdbdbd;
+  color: #899094;
+  font: 12px/1.2 "Luxi Sans", "Lucida Grande", "Hiragino Sans GB", sans-serif;
+}
+
+header {
+  padding: 5px 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.action-area {
+  min-height: 30px;
+  padding: 15px 30px;
+}
+
+.profile-nav li {
+  border-top: 1px solid #ddd;
+}
+
+.profile-nav li a {
+  display: block;
+  padding: 8px 12px;
+}
+
+.active {
+  color: #000;
+  font-weight: bolder;
+}
+
+.user {
+  float: left;
+  margin-left: 20px;
+  margin-top: 20px;
+  width: 70px;
+  text-align: center;
+}
+
+.user-list {
+  padding-bottom: 20px;
+  overflow: hidden;
+}
+
+
+.single {
+  border-bottom: 0;
+}
+
+.explain {
+  padding: 15px 20px;
+  display: block;
+}
+
+.lightbox {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  z-index: 100000;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+
+#confirm-box {
+  width: 300px;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  margin: -130px 0 0 -230px;
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.6);
+  z-index: 1000000;
+}
+
+#confirm-box header {
+  padding: 15px;
+  font-size: 15px;
+  font-weight: bold;
+  border: 0;
+  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #F0F1F2), color-stop(1, white));
+}
+#confirm-box .confirm-action {
+  padding: 15px;
+  text-align: center;
+}
+#confirm-box .confirm-action a {
+  margin: 0 20px;
+}
+
+.fadeOut {
+  -webkit-animation-name: fadeOut;
+  -moz-animation-name: fadeOut;
+  -o-animation-name: fadeOut;
+  animation-name: fadeOut;
+}
+
+.fadeIn {
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -o-animation-name: fadeIn;
+  animation-name: fadeIn;
+}
+
+.bounceOutUp {
+  -webkit-animation-name: bounceOutUp;
+  -moz-animation-name: bounceOutUp;
+  -o-animation-name: bounceOutUp;
+  animation-name: bounceOutUp;
+}
+
+.bounceInDown {
+  -webkit-animation-name: bounceInDown;
+  -moz-animation-name: bounceInDown;
+  -o-animation-name: bounceInDown;
+  animation-name: bounceInDown;
+}
+.gone {
+  display: none !important;
+}
+
+.animated {
+  -webkit-animation-duration: 1s;
+  -moz-animation-duration: 1s;
+  -o-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+.hide {
+  display: none;
+}
+
+.retweeter {
+  font-size: 12px;
+}
+
+.curly {
+  background: transparent url(/static/img/curly.png) top right no-repeat;
+}
+
+.items .item:nth-child(1) {
+  border-top: 1px solid #ded;
 }

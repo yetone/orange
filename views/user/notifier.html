@@ -2,6 +2,7 @@
 
 {% block title %}{{ current_user.name }} - {% end %}
 {% block mainbar %}
+<section class="box no-padding">
 <ul class="items notifier-items">
 {% if notifiers != [] %}
   {% for n in notifiers %}
@@ -41,4 +42,5 @@
   {% end %}
 {% end %}
 </ul>
+</section>
 {% end %}

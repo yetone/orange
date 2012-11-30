@@ -37,25 +37,30 @@ class PostAddHandler(BaseHandler):
                 self.write(tornado.escape.json_encode({'username': user.name, 'avatar':
                     user.get_avatar(), 'time': formatDate(int(time.time())),
                     'content': content, 'id': post.id}))
+                '''
+                self.render('site/ajaxpage.html', posts = [post])
+                '''
             else:
-                self.redirect(self.nex_url())
+                self.redirect(self.next_url())
             if post.content.find('@') != -1:
                 post_put_notifier(post)
         else:
             self.redirect(self.next_url)
-            return
+        return
 
 
 class PostEditHandler(BaseHandler):
     @tornado.web.authenticated
-    def post(self):
-        user_id = int(self.get_current_user().id)
+    def post(self, post_id):
+        post_id = int(post_id)
         origin_content = self.get_argument("content", '')
-        content = md(origin_content)
         if origin_content != '':
-            db.add(Post(user_id=user_id, content=content, origin_content=origin_content))
+            content = md(origin_content)
+            user = self.current_user
+            post = db.query(Post).get(post_id)
+            post.origin_content = origin_content
+            post.content = content
             db.commit()
-            user = db.query(User).get(user_id)
             if self.is_ajax():
                 self.write(tornado.escape.json_encode({'username': user.name, 'avatar':
                     user.get_avatar(), 'time': formatDate(int(time.time())),
@@ -68,25 +73,22 @@ class PostEditHandler(BaseHandler):
 
 class PostDelHandler(BaseHandler):
     @tornado.web.authenticated
-    def post(self, post_id):
+    def get(self, post_id):
         post_id = int(post_id)
         user = self.get_current_user()
         post = db.query(Post).get(post_id)
-        if post:
-            if post.user_id == user.id:
-                comments = post.get_comments()
-                if comments != []:
-                    for comment in comments:
-                        db.delete(comment)
-                db.delete(post)
-                db.commit()
-        self.redirect(self.next_url)
+        if post and post.user_id == user.id:
+            comments = post.get_comments()
+            retweets = post.get_retweets()
+            if comments != []:
+                for comment in comments:
+                    db.delete(comment)
+            if retweets != []:
+                for retweet in retweets:
+                    db.delete(retweet)
+            db.delete(post)
+            db.commit()
+        else:
+            self.redirect(self.next_url)
         return
 
-class TwitterFormModule(tornado.web.UIModule):
-    def render(self):
-        return self.render_string("modules/twitterform.html")
-
-class ItermsModule(tornado.web.UIModule):
-    def render(self, posts):
-        return self.render_string("modules/iterms.html", posts=posts)

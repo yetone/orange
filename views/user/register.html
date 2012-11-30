@@ -2,6 +2,7 @@
 
 {% block script %}<script type="text/javascript" src="{{ static_url('js/register.js') }}"></script>{% end %}
 {% block content %}
+<section class="box">
 <form method="post" id="reg" name="reg" action="/register">
   <fieldset>
     <legend>注册</legend>
@@ -27,4 +28,5 @@
     </div>
   </fieldset>
 </form>
+</section>
 {% end %}

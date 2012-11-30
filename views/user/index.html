@@ -3,11 +3,35 @@
 {% block title %}{{ user.name }} - {% end %}
 {% block script %}<script type="text/javascript" src="{{ static_url('js/profile.js') }}"></script>{% end %}
 {% block content %}
+<section class="box no-padding">
 {{ modules.Profile(user) }}
+</section>
 <div id="mainbar">
+  {% if posts != [] %}
+  <section class="box no-padding">
   {{ modules.Iterms(posts) }}
   <div id="loadmore">
     <a class="loadmore" href="/user/{{ user.name }}/page/{{ page + 1 }}">更多</a>
   </div>
+  <section>
+  {% else %}
+  <section class="box no-padding">
+    <ul>
+    <span class="explain">无内容。</span>
+  </ul>
+  </section>
+  {% end %}
+</div>
+<div id="sidebar">
+  <section class="box no-padding">
+    <ul class="profile-nav">
+      <li class="active" id="twi">
+        <a href="/user/{{ user.name }}/posts">< 推文</a>
+      </li>
+      <li id="fav">
+        <a href="/user/{{ user.name }}/favorites">< 收藏</a>
+      </li>
+    </ul>
+  </section>
 </div>
 {% end %}

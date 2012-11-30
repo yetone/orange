@@ -2,9 +2,13 @@
 
 {% block script %}<script type="text/javascript" src="{{ static_url('js/profile.js') }}"></script>{% end %}
 {% block mainbar %}
+<section class="box no-padding">
 <div class="referrers">
   <header>先关注几位同学吧</header>
   {{ modules.UserList(users) }}
+  <div class='action-area'>
   <a class="btn" href="/account/setting">下一步</a>
+  </div>
 </div>
+</section>
 {% end %}

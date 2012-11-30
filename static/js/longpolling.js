@@ -19,7 +19,7 @@ var updater = {
         if(loadcount.length != 0){
           loadcount.html(data);
         } else if (loaditem.length == 0){
-          $('.items').prepend(inner);
+          $(inner).clone().hide().prependTo('.twitter-items').slideDown();
         }
       } else {
         var loaditem = $('#loadunread');
