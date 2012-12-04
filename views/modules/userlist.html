@@ -1,6 +1,6 @@
-<div class="items user-items">
+<ul class="items user-items">
   {% for user in users %}
-  <div class="item user-item">
+  <li class="item user-item">
     <a href="/user/{{ user.name }}">
       <img class="avatar" src="{{ user.get_avatar() }}">
     </a>
@@ -23,6 +23,6 @@
         {% end %}
       {% end %}
     </div>
-  </div>
+  </li>
   {% end %}
-</div>
+</ul>

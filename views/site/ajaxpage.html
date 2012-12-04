@@ -61,17 +61,17 @@
       </div>
     </div>
     <div class="comment-wrap">
-      <div class="twitter-comment-textbox">
+      <div class="comment-textbox">
         <form method="post" action="/post/{{ post.id }}/comment/add">
           <input class="comment-editor" type="text" name="comment-content" size="35">
           <input class="btn mini-btn" type="submit" value="发布">
           {{ xsrf_form_html() }}
         </form>
       </div>
-      <ul class="items twitter-comments">
+      <ul class="comment-items">
       {% if len(post.get_comments()) > 0 %}
         {% for comment in post.get_comments() %}
-        <li class="item comment-iterm">
+        <li class="comment-iterm">
           <a href="/user/{{ comment.get_author().name }}"><img class="avatar" src="{{ comment.get_author().get_avatar(size=24) }}"></a>
           <div class="comment-content">
             <div class="name">

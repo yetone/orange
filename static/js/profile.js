@@ -1,5 +1,5 @@
 $(function(){
-  $('.profile-action .btn').click(function(){
+  $('.profile-action .btn').live('click', function(){
     var origin_url = $(this).attr('href');
     var url = origin_url.substr(0,origin_url.lastIndexOf('/'));
     var followeder_count = $('.stats li:eq(1) strong');

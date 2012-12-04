@@ -26,7 +26,7 @@ class PostHandler(BaseHandler):
 class PostAddHandler(BaseHandler):
     @tornado.web.authenticated
     def post(self):
-        user = self.get_current_user()
+        user = self.current_user
         origin_content = self.get_argument("content", '')
         content = md(origin_content)
         if origin_content != '':
@@ -41,7 +41,7 @@ class PostAddHandler(BaseHandler):
                 self.render('site/ajaxpage.html', posts = [post])
                 '''
             else:
-                self.redirect(self.next_url())
+                self.redirect(self.next_url)
             if post.content.find('@') != -1:
                 post_put_notifier(post)
         else:
@@ -66,7 +66,7 @@ class PostEditHandler(BaseHandler):
                     user.get_avatar(), 'time': formatDate(int(time.time())),
                     'content': content}))
             else:
-                self.redirect(self.next_url())
+                self.redirect(self.next_url)
         else:
             self.redirect(self.next_url)
             return
@@ -75,7 +75,7 @@ class PostDelHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, post_id):
         post_id = int(post_id)
-        user = self.get_current_user()
+        user = self.current_user
         post = db.query(Post).get(post_id)
         if post and post.user_id == user.id:
             comments = post.get_comments()

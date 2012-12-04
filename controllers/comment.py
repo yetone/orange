@@ -20,7 +20,7 @@ config = config.rec()
 class CommentAddHandler(BaseHandler):
     @tornado.web.authenticated
     def post(self, post_id):
-        user = self.get_current_user()
+        user = self.current_user
         post_id = int(post_id)
         post = db.query(Post).get(post_id)
         if not post:

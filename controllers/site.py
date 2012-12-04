@@ -62,7 +62,7 @@ class HomeHandler(BaseHandler):
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
     def open(self):
-        current_user = self.get_current_user()
+        current_user = self.current_user
         posts = []
         if current_user:
             return
@@ -84,7 +84,7 @@ class LongPollingHandler(BaseHandler):
         if self.request.connection.stream.closed():
             return
 
-        num = get_unread_count(self, self.get_current_user())
+        num = get_unread_count(self, self.current_user)
         tornado.ioloop.IOLoop.instance().add_timeout(
                 time.time() + 3,
                 lambda: callback(num)
@@ -99,9 +99,9 @@ class LoadUnreadHandler(BaseHandler):
         if self.request.headers.has_key('X-Requested-With'):
             nrtimesnap = self.get_nrtimesnap()
             self.set_nrtimesnap()
-            user = self.get_current_user()
+            user = self.current_user
             if user:
-                followeder_ids = user.get_followeder_ids()
+                followeder_ids = user.get_followeder_ids() + [user.id]
                 posts =\
                 db.query(Post).order_by(sa.desc(Post.created_at)).filter(sa.and_(Post.user_id.in_(followeder_ids),
                     Post.created_at > nrtimesnap)).all()

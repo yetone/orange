@@ -33,7 +33,7 @@ class UserProfileGet(BaseHandler):
     @tornado.web.authenticated
     def get(self, username):
         if self.is_ajax():
-            currenter = self.get_current_user()
+            currenter = self.current_user
             user = db.query(User).filter(User.name == username).first()
             if user in currenter.get_followeders():
                 f = 1
@@ -57,7 +57,7 @@ class UserListPage(BaseHandler):
 class ReferrerPage(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        user = self.get_current_user()
+        user = self.current_user
         users = db.query(User).order_by(func.rand()).filter(User.id !=
                 user.id).limit(9).all()
         self.render("user/referrers.html", users=users)
@@ -125,7 +125,7 @@ class AvatarUploadHandler(BaseHandler):
             tmp_file.close()
             self.write('<script>alert("图片长宽在180px~2000px之间！");</script>')
             return
-        user = self.get_current_user()
+        user = self.current_user
         image_path = "./static/img/avatar/" + user.name + "/"
         '''
         if not os.path.exists(image_path):
@@ -166,7 +166,7 @@ class AccountSettingHandler(BaseHandler):
         self.render("user/setting.html")
         return
     def post(self):
-        user = self.get_current_user()
+        user = self.current_user
         description = self.get_argument("description", '')
         website = self.get_argument("website", '')
         city = self.get_argument("city", '')
@@ -182,7 +182,7 @@ class AccountSettingHandler(BaseHandler):
 class FollowHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, whom_name):
-        who = self.get_current_user()
+        who = self.current_user
         whom = db.query(User).filter(User.name==whom_name).first()
         if whom is None or whom is who:
             raise tornado.web.HTTPError(404)
@@ -197,7 +197,7 @@ class FollowHandler(BaseHandler):
 class UnfollowHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, whom_name):
-        who = self.get_current_user()
+        who = self.current_user
         whom = db.query(User).filter(User.name==whom_name).first()
         if not whom:
             raise tornado.web.HTTPError(404)
@@ -242,7 +242,7 @@ class FollowederHandler(BaseHandler):
 class NotifierHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        user = self.get_current_user()
+        user = self.current_user
         notifiers = user.get_notifiers()
         self.render("user/notifier.html", notifiers = notifiers)
         unread_notifiers = user.get_unread_notifiers()
@@ -256,7 +256,7 @@ class FavoriteHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, post_id):
         post_id = int(post_id)
-        user = self.get_current_user()
+        user = self.current_user
         post = db.query(Post).get(post_id)
         if post and post.user_id != user.id:
             favorite = db.query(Favorite).filter(sa.and_(Favorite.user_id ==\
@@ -268,7 +268,7 @@ class FavoriteHandler(BaseHandler):
                 db.add(favorite)
             db.commit()
         else:
-            self.redirect(self.next_url())
+            self.redirect(self.next_url)
         return
 
 class RetweetHandler(BaseHandler):
@@ -288,14 +288,14 @@ class RetweetHandler(BaseHandler):
                 db.add(re_post)
             db.commit()
         else:
-            self.redirect(self.next_url())
+            self.redirect(self.next_url)
         return
 
 class FavoritesShowHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, page=1):
         page = int(page)
-        user = self.get_current_user()
+        user = self.current_user
         posts = user.get_favorites(page=page)
         if not self.is_ajax():
             self.render("user/favorite.html", posts = posts, page = page,
@@ -329,7 +329,7 @@ class NotifierLongPollingHandler(BaseHandler):
         if self.request.connection.stream.closed():
             return
 
-        num = get_unread_count(self.get_current_user())
+        num = get_unread_count(self.current_user)
         tornado.ioloop.IOLoop.instance().add_timeout(
                 time.time() + 3,
                 lambda: callback(num)
@@ -341,7 +341,7 @@ class NotifierLongPollingHandler(BaseHandler):
 
 class LoginHandler(BaseHandler):
     def get(self):
-        if self.get_current_user() is not None:
+        if self.current_user is not None:
             self.redirect("/")
         self.render("user/login.html")
 

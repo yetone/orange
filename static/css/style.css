@@ -122,14 +122,15 @@ label {
 }
 
 .twitter-action {
-  padding: 15px;
-  width: 500px;
+  margin-top: 5px;
+  width: 520px;
+  display: none;
+  overflow: hidden;
 }
 
 #twitter {
   width: 450px;
-  padding: 20px 25px 10px 25px;
-  margin-bottom: 20px;
+  padding: 15px 25px 10px 25px;
 }
 #twitter textarea {
   width: 500px;
@@ -328,24 +329,24 @@ small {
   margin-left: 36px;
 }
 
-.comment-iterm {
+.comment-item {
   margin: 8px 0;
   padding: 10px;
   border-bottom: 0;
   border-top: 1px #ded dashed;
 }
 
-.twitter-comments {
+.comment-items {
   padding-left: 10px;
   padding-right: 30px;
 }
 
-.twitter-comment-textbox {
+.comment-textbox {
   margin-top: 10px;
   margin-left: 20px;
 }
 
-.twitter-comment-textbox form {
+.comment-textbox form {
   margin-bottom: 15px;
 }
 .comment-content {

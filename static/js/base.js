@@ -4,6 +4,21 @@ function getCookie(name) {
 }
 
 $(function(){
+  $('#twitter-input').focus().click(function(){
+    $(this).animate({'height':'4.8em'});
+    $('.twitter-action').fadeIn();
+  }).keyup(function(){
+    if($(this).height() < 63 && $(this).val().length >= 2){
+      $(this).triggerHandler('click');
+    };
+  });
+  /*$('#twitter-input').mouseover(function(){
+    $(this).focus();
+  });*/
+  $('input.comment-editor').live('mouseover', function(){
+  //$('.item').delegate('.comment-editor', 'mouseover', function(){
+    $(this).focus();
+  });
   $('.mention').live('mouseover', function(e){
     $('#floater').remove();
     var top = (e.pageY + 2) + "px";
@@ -33,7 +48,7 @@ $(function(){
     )
   });
 
-  $('.item').live('hover',
+  $('.twitter-item').live('hover',
     function(){
       $(this).find('.info .action ul').toggle();
     }
@@ -95,13 +110,16 @@ $(function(){
     }
   });
   $('.twitter-action .btn').live('click',function(){
+    if($(this).parents('#twitter').children('#twitter-input').val() == ''){
+      return false;
+    }
     $(this).val('正在发布...');
     var content = $(this).parents('form').children('textarea').val();
     var args = {"content": content};
     args._xsrf=document.cookie.match("\\b" + "_xsrf" + "=([^;]*)\\b")[1];
     $.post("/post/add", $.param(args), function(data){
       data = eval("(" + data + ")");
-      var precontent = '<li id="post_'+ data.id + '" class="item twitter-item"><a href="/user/'+ data.username + '"><img class="avatar" src="' + data.avatar +'"></a><div class="twitter-content"><div class="name"><a href="/user/' + data.username + '"><strong>' + data.username + '</strong></a></div><div class="content">' + data.content + '</div><div class="info"><small>' + data.time + '</small><div class="action"><ul style="display: none;"><li><a class="reply" href="#;">reply</a></li><li><a class="del" href="/post/' + data.id + '/del">del</a></li><li><a class="fav" href="/post/' + data.id + '/fav">fav</a></li></ul></div></div></div><div class="comment-wrap"><div class="twitter-comment-textbox"><form method="post" action="/post/' + data.id + '/comment/add"><input class="comment-editor" type="text" name="comment-content" size="35"><input class="btn mini-btn comment-submit" type="submit" value="发布"><input type="hidden" name="_xsrf" value="' + args._xsrf + '"></form></div><div class="twitter-comments"></div></li>';
+      var precontent = '<li id="post_' + data.id + '" class="item twitter-item"><a href="/user/'+ data.username + '"><img class="avatar" src="' + data.avatar +'"></a><div class="twitter-content"><div class="name"><a href="/user/' + data.username + '"><strong>' + data.username + '</strong></a></div><div class="content">' + data.content + '</div><div class="info"><a href="/post/' + data.id + '"><small>' + data.time + '</small></a><div class="action"><ul style="display: none;"><li><a class="reply" href="#;">reply</a></li><li><a class="del" href="/post/' + data.id + '/del">del</a></li><li><a class="fav" href="/post/' + data.id + '/fav">fav</a></li></ul></div></div></div><div class="comment-wrap"><div class="comment-textbox"><form method="post" action="/post/' + data.id + '/comment/add"><input class="comment-editor" type="text" name="comment-content" size="35"><input class="btn mini-btn comment-submit" type="submit" value="发布"><input type="hidden" name="_xsrf" value="' + args._xsrf + '"></form></div><div class="comments"></div></li>';
       //var precontent = data;
       var loadunread = $('.loadunread');
       if(loadunread.length > 0){
@@ -118,21 +136,24 @@ $(function(){
     $(this).parents('form').children('textarea').val('');
     return false;
   });
-  $('.twitter-comment-textbox .btn').live('click',
+  $('.comment-textbox .btn').live('click',
     function(){
+      if($(this).parents('form').children('.comment-editor').val()==''){
+        return false;
+      }
       $(this).val('正在发布...');
       var idx = $(this).parents('.twitter-item').attr('id');
       var id = idx.substr(idx.indexOf('_') + 1, idx.length);
-      var items = $(this).parents('.twitter-comment-textbox').next();
+      var items = $(this).parents('.comment-textbox').next();
       var url = $(this).parents('form').attr('action');
       var content = $(this).prev().val();
       var args = {"comment-content": content};
       args._xsrf=document.cookie.match("\\b" + "_xsrf" + "=([^;]*)\\b")[1];
       $.post(url, $.param(args), function(data){
         data = eval("(" + data + ")");
-        var precontent = "<li class='comment-iterm'><a href='/user/" + data.username + "'><img class='avatar' src='" + data.avatar + "'></a><div class='comment-content'><div class='name'><strong>" + data.username + "</strong></div><div class='content'>" + data.content + "</div><div class='info'><small>" + data.time +" </small></div></li>";
+        var precontent = "<li class='comment-item'><a href='/user/" + data.username + "'><img class='avatar' src='" + data.avatar + "'></a><div class='comment-content'><div class='name'><strong>" + data.username + "</strong></div><div class='content'>" + data.content + "</div><div class='info'><small>" + data.time +" </small></div></li>";
         $(precontent).clone().hide().prependTo(items).slideDown();
-        $('#post_' + id + ' .twitter-comment-textbox .btn').val('发布');
+        $('#post_' + id + ' .comment-textbox .btn').val('发布');
       });
       $(this).prev().val('');
       return false;
@@ -154,9 +175,9 @@ $(function(){
         loadmore.html('更多');
       }
       if($.browser.webkit){
-        $(data).clone().hide().appendTo('.twitter-items').slideDown();
+        $(data).clone().hide().appendTo('section > .items').slideDown();
       } else {
-        $(data).appendTo('.twitter-items');
+        $(data).appendTo('section > .items');
       }
       return false;
     });
@@ -166,9 +187,12 @@ $(function(){
     $.get('/loadunread', function(data){
       $('.loadunread').html('正在加载...');
       if($.browser.webkit){
-        $(data).clone().hide().prependTo('.items').fadeIn();
+        //$(data).clone().hide().prependTo('section > .items').fadeIn();
+        //$('#loadunread').after(data);
+        $(data).insertAfter('#loadunread').hide().fadeIn();
       } else {
-        $(data).prependTo('.items');
+        //$(data).prependTo('section > .items');
+        $(data).insertAfter('#loadunread');
       }
       $('.loadunread').html('加载完毕');
       $('#loadunread').hide();
