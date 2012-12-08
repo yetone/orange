@@ -1,7 +1,12 @@
+function getCookie(name) {
+    var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+    return r ? r[1] : undefined;
+}
 var updater = {
+  errorSleepTime: 500,
+
   poll: function() {
-    args = {"hello": "word"}
-    args._xsrf=document.cookie.match("\\b" + "_xsrf" + "=([^;]*)\\b")[1];
+    var args = {"_xsrf": getCookie("_xsrf")};
     $.ajax({url: "/longpolling",
            type: "POST",
            data: $.param(args),
@@ -31,10 +36,13 @@ var updater = {
       updater.onError();
       return;
     }
-    interval = window.setTimeout(updater.poll, 0);
+    updater.errorSleepTime = 500;
+    window.setTimeout(updater.poll, 0);
   },
   onError: function(){
-    console.log("Poll error;");
+    updater.errorSleepTime *= 2;
+    console.log("Poll error; sleeping for", updater.errorSleepTime, "ms");
+    window.setTimeout(updater.poll, updater.errorSleepTime);
   }
 };
 updater.poll();

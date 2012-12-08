@@ -5,7 +5,6 @@ import tornado.websocket
 import tornado.ioloop
 
 import time
-import random
 import logging
 import config
 from .base import BaseHandler
@@ -21,14 +20,14 @@ def get_unread_count(hi, user):
     if user:
         nrtimesnap = hi.get_nrtimesnap()
         followeder_ids = user.get_followeder_ids()
-        posts =\
+        count =\
         db.query(Post).order_by(sa.desc(Post.created_at)).filter(sa.and_(Post.user_id.in_(followeder_ids),
-            Post.created_at > nrtimesnap, Post.user_id != user.id)).all()
+            Post.created_at > nrtimesnap, Post.user_id != user.id)).count()
     else:
-        posts =\
+        count =\
         db.query(Post).order_by(sa.desc(Post.created_at)).filter(Post.created_at
-                > nrtimesnap).all()
-    return len(posts)
+                > nrtimesnap).count()
+    return count
 
 class StartHandler(BaseHandler):
     def get(self):

@@ -3,10 +3,8 @@
 import tornado.web
 import tornado.escape
 
-import random
 import os
 import shutil
-import copy
 import time
 import tempfile
 import Image
@@ -17,13 +15,13 @@ import helpers
 from database import db
 import sqlalchemy as sa
 from extensions import md
-from sqlalchemy.sql.expression import func, select
+from sqlalchemy.sql.expression import func
 
-from models import User, Post, Follower, Favorite, Retweet
+from models import User, Post, Follower, Favorite
 config = config.rec()
 
 def get_user_count():
-    return len(db.query(User).all())
+    return db.query(User).count()
 
 def get_unread_count(user):
     return len(user.get_unread_notifiers())

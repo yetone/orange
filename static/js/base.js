@@ -1,12 +1,17 @@
-function getCookie(name) {
+var get_cookie = function(name) {
   var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
   return r?r[1]:undefined;
+}
+
+var get_captcha = function(url) {
+    var uri = url + '?t=' + String(Math.random()).slice(3,8);
+    $("#captcha-image").attr('src', uri);
 }
 
 $(function(){
   $('#twitter-input').focus().click(function(){
     $(this).animate({'height':'4.8em'});
-    $('.twitter-action').fadeIn();
+    $('.twitter-action').fadeIn(300);
   }).keyup(function(){
     if($(this).height() < 63 && $(this).val().length >= 2){
       $(this).triggerHandler('click');
